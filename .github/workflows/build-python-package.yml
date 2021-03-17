@@ -1,0 +1,31 @@
+name: build opencv python package
+
+on: push
+
+jobs:
+  build:
+    name: Build opencv
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependency packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            git cmake g++ wget unzip
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+            -DOPENCV_ENABLE_NONFREE=1 \
+            ../
+
+      - name: Build
+        run: |
+          cd build
+          make -j$(nproc --all)
